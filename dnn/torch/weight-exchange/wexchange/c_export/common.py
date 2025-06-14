@@ -40,6 +40,7 @@ def print_vector(writer, vector, name, dtype='float', reshape_8x4=False, static=
 
     dtype_suffix = {
         'float' : 'float',
+        'opus_uint8' : 'uint8',
         'opus_int8' : 'int8',
         'opus_uint16' : 'uint16',
         'opus_int16' : 'int16',
@@ -54,7 +55,7 @@ f'''
 #ifndef USE_WEIGHTS_FILE
 '''
         )
-    writer.weight_arrays.append(name)
+        writer.weight_arrays.append(name)
 
     if reshape_8x4:
         vector = vector.reshape((vector.shape[0]//4, 4, vector.shape[1]//8, 8))
@@ -296,7 +297,6 @@ def print_conv1d_layer(writer : CWriter,
     writer.header.write(f"\n#define {name.upper()}_OUT_SIZE {weight.shape[2]}\n")
     writer.header.write(f"\n#define {name.upper()}_IN_SIZE {weight.shape[1]}\n")
     writer.header.write(f"\n#define {name.upper()}_STATE_SIZE ({weight.shape[1]} * ({weight.shape[0] - 1}))\n")
-    writer.header.write(f"\n#define {name.upper()}_DELAY {(weight.shape[0] - 1) // 2}\n") # CAVE: delay is not a property of the conv layer
 
     return weight.shape[0] * weight.shape[1]
 
